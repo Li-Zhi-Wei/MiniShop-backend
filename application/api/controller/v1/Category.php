@@ -10,9 +10,12 @@ class Category
 {
 
     public function getAllCategories(){
-        $categories = CategoryModel::with('img')->select();
+        $categories = CategoryModel::with('img')->where('pid',0)->select();
         if($categories->isEmpty()){
             throw new CategoryException();
+        }
+        foreach ($categories as $item) {
+            $item['children'] = CategoryModel::with('img')->where('pid',$item['id'])->select();
         }
         $categories->hidden(['']);
         return $categories;
